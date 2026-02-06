@@ -1,28 +1,3 @@
-// ========== PERFORMANCE HELPERS ==========
-
-// Debounce resize
-let resizeTimeout;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
-    CONFIG.characterBounds.right = window.innerWidth - 50;
-    CONFIG.characterBounds.bottom = window.innerHeight - 50;
-  }, 250);
-});
-
-// Pause when tab not visible
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    // Pause game
-    gameActive = false;
-  } else {
-    // Resume if was playing
-    if (lives > 0) {
-      gameActive = true;
-    }
-  }
-});
-
 const sprites = {
   idle: 'assets/sprites/character/boy-flying-idle.png',
   normal: 'assets/sprites/character/boy-flying-normal.png',
@@ -37,70 +12,25 @@ const scoreDisplay = document.querySelector('#score span');
 const livesDisplay = document.getElementById('lives');
 const boostBtn = document.getElementById('boost-btn');
 
-// ========== OPTIMIZED TOUCH CONTROLS ==========
-
 let charX = window.innerWidth / 2;
 let charY = window.innerHeight * 0.7;
-let isDragging = false;
+let score = 0;
+let lives = 3;
+let isBoosting = false;
 let touchStartX = 0;
-let animationFrameId = null;
+let isDragging = false;
 
-// Use requestAnimationFrame for smooth movement
-function updateCharacterPosition() {
-  character.style.transform = `translate(${charX - window.innerWidth/2}px, ${charY - window.innerHeight*0.7}px)`;
+function init() {
+  character.style.left = charX + 'px';
+  character.style.top = charY + 'px';
+  scoreDisplay.textContent = '0';
+  livesDisplay.textContent = '❤️❤️❤️';
 }
 
 gameContainer.addEventListener('touchstart', (e) => {
-  if (!gameActive) return;
   e.preventDefault();
   touchStartX = e.touches[0].clientX;
   isDragging = true;
-});
-
-gameContainer.addEventListener('touchmove', (e) => {
-  if (!gameActive) return;
-  e.preventDefault();
-  
-  if (isDragging) {
-    const touchX = e.touches[0].clientX;
-    const deltaX = touchX - touchStartX;
-    
-    charX += deltaX * 0.6;
-    charX = Math.max(
-      CONFIG.characterBounds.left, 
-      Math.min(CONFIG.characterBounds.right, charX)
-    );
-    
-    // Update sprite
-    if (deltaX < -5 && !isBoosting) {
-      character.src = sprites.left;
-    } else if (deltaX > 5 && !isBoosting) {
-      character.src = sprites.right;
-    } else if (!isBoosting) {
-      character.src = sprites.normal;
-    }
-    
-    // Use RAF for smooth rendering
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-    }
-    
-    animationFrameId = requestAnimationFrame(() => {
-      updateCharacterPosition();
-    });
-    
-    touchStartX = touchX;
-  }
-});
-
-gameContainer.addEventListener('touchend', (e) => {
-  if (!gameActive) return;
-  e.preventDefault();
-  isDragging = false;
-  
-  if (!isBoosting) {
-    character.src = sprites.idle;
-  }
 });
 
 gameContainer.addEventListener('touchmove', (e) => {
