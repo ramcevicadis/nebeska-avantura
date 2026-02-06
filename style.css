@@ -45,17 +45,17 @@ body {
 }
 
 .clouds-far {
-  background-image: url('assets/bg/clouds-far.png');
-  background-size: 1200px auto;
-  opacity: 0.35;
+  background-image: url('assets/bg/clouds-new-far.png');
+  background-size: 1400px auto; /* Malo veće za bolje pokrivanje */
+  opacity: 0.4;
   animation: scroll-clouds-slow 100s linear infinite;
   z-index: 2;
 }
 
 .clouds-mid {
-  background-image: url('assets/bg/clouds-mid.png');
-  background-size: 800px auto;
-  opacity: 0.55;
+  background-image: url('assets/bg/clouds-new-mid.png');
+  background-size: 1000px auto;
+  opacity: 0.6;
   animation: scroll-clouds-fast 55s linear infinite;
   z-index: 3;
 }
