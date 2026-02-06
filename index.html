@@ -1,14 +1,45 @@
 <!DOCTYPE html>
 <html lang="sr">
 <head>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Nebeska Avantura 🚀</title>
+  <title>Nebeska Avantura</title>
+  <link rel="stylesheet" href="globals.css">
+  <link rel="stylesheet" href="styleguide.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="game-container">
+  
+  <!-- ========== START SCREEN ========== -->
+  <main class="intro" id="start-screen">
+    <!-- Background image -->
+    <img 
+      class="intro-bg-image" 
+      src="assets/img/intro-screen.png" 
+      alt="Nebeska Avantura pozadina"
+    >
+    
+    <!-- Figma Button -->
+    <button 
+      class="dugme-pocetak-igre" 
+      type="button" 
+      id="start-btn"
+      aria-label="Počni igru"
+    >
+      <span class="highlight" aria-hidden="true"></span>
+      <span class="button" aria-hidden="true">
+        <img class="union" src="assets/img/union.svg" alt="" aria-hidden="true">
+      </span>
+      <span class="box">
+        <img class="icon" src="assets/img/icon.svg" alt="" aria-hidden="true">
+        <span class="label">POČNI IGRU</span>
+      </span>
+    </button>
+  </main>
+
+  <!-- ========== GAME SCREEN ========== -->
+  <div id="game-container" style="display: none; opacity: 0;">
     <div id="sky-gradient"></div>
     <div class="clouds-layer clouds-far"></div>
     <div class="clouds-layer clouds-mid"></div>
@@ -17,13 +48,72 @@
     <div id="lives">❤️❤️❤️</div>
     
     <img id="character" src="assets/sprites/character/boy-flying-idle.png" alt="Junak">
-    
     <div id="game-elements"></div>
     <button id="boost-btn" aria-label="Boost">🚀</button>
+    
+    <div id="game-over" style="display: none;">
+      <div class="game-over-content">
+        <h1>IGRA ZAVRŠENA</h1>
+        <p>Tvoj Skor: <span id="final-score">0</span></p>
+        <button id="restart-btn" class="big-button">IGRAJ PONOVO</button>
+        <button id="menu-btn" class="big-button secondary">GLAVNI MENI</button>
+      </div>
+    </div>
   </div>
-  
+
+  <!-- JavaScript -->
   <script src="game.js"></script>
+  <script>
+    const startScreenEl = document.getElementById('start-screen');
+    const gameContainerEl = document.getElementById('game-container');
+    const startBtnEl = document.getElementById('start-btn');
+    
+    if (startBtnEl) {
+      startBtnEl.addEventListener('click', function() {
+        console.log('Start button clicked!');
+        
+        startScreenEl.style.transition = 'opacity 0.5s ease-out';
+        startScreenEl.style.opacity = '0';
+        
+        setTimeout(function() {
+          startScreenEl.style.display = 'none';
+          gameContainerEl.style.display = 'block';
+          
+          setTimeout(function() {
+            gameContainerEl.style.transition = 'opacity 0.5s ease-in';
+            gameContainerEl.style.opacity = '1';
+          }, 50);
+          
+          if (typeof initGame === 'function') {
+            initGame();
+          }
+        }, 500);
+      });
+    }
+    
+    const menuBtnEl = document.getElementById('menu-btn');
+    if (menuBtnEl) {
+      menuBtnEl.addEventListener('click', function() {
+        gameContainerEl.style.transition = 'opacity 0.5s ease-out';
+        gameContainerEl.style.opacity = '0';
+        
+        setTimeout(function() {
+          gameContainerEl.style.display = 'none';
+          
+          if (typeof resetGame === 'function') {
+            resetGame();
+          }
+          
+          startScreenEl.style.display = 'flex';
+          startScreenEl.style.opacity = '0';
+          
+          setTimeout(function() {
+            startScreenEl.style.transition = 'opacity 0.5s ease-in';
+            startScreenEl.style.opacity = '1';
+          }, 50);
+        }, 500);
+      });
+    }
+  </script>
 </body>
 </html>
-```
-
