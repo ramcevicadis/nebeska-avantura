@@ -162,3 +162,80 @@ function checkCollision(el1, el2) {
 // Start spawning collectibles
 setInterval(spawnCollectible, COLLECTIBLES.spawnInterval);
 ``
+// ========== OBSTACLES SYSTEM ==========
+
+// Obstacle config
+const OBSTACLES = {
+  spawnInterval: 3500,  // Nova prepreka na svakih 3.5 sekundi
+  fallSpeed: 4,
+  damage: 1,  // Oduzima 1 život
+  size: 50
+};
+
+// Spawn obstacle
+function spawnObstacle() {
+  const obstacle = document.createElement('div');
+  obstacle.className = 'obstacle';
+  obstacle.textContent = '☁️'; // Ili '💀' ili '⚡'
+  obstacle.style.fontSize = OBSTACLES.size + 'px';
+  obstacle.style.position = 'absolute';
+  obstacle.style.left = (Math.random() * (window.innerWidth - 80) + 40) + 'px';
+  obstacle.style.top = '-80px';
+  obstacle.style.zIndex = '60';
+  obstacle.style.pointerEvents = 'none';
+  obstacle.style.filter = 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))';
+  
+  document.getElementById('game-elements').appendChild(obstacle);
+  
+  // Animate downward
+  let obstacleY = -80;
+  const moveInterval = setInterval(() => {
+    obstacleY += OBSTACLES.fallSpeed;
+    obstacle.style.top = obstacleY + 'px';
+    
+    // Check collision
+    if (checkCollision(character, obstacle)) {
+      hitObstacle(obstacle, moveInterval);
+    }
+    
+    // Remove if off screen
+    if (obstacleY > window.innerHeight + 80) {
+      obstacle.remove();
+      clearInterval(moveInterval);
+    }
+  }, 30);
+}
+
+// Hit obstacle
+function hitObstacle(obstacle, interval) {
+  lives -= OBSTACLES.damage;
+  updateLives();
+  
+  // Visual feedback - blink character
+  character.style.opacity = '0.3';
+  setTimeout(() => { character.style.opacity = '1'; }, 100);
+  setTimeout(() => { character.style.opacity = '0.3'; }, 200);
+  setTimeout(() => { character.style.opacity = '1'; }, 300);
+  
+  obstacle.remove();
+  clearInterval(interval);
+  
+  // Check game over
+  if (lives <= 0) {
+    gameOver();
+  }
+}
+
+// Update lives display
+function updateLives() {
+  livesDisplay.textContent = '❤️'.repeat(Math.max(0, lives));
+  
+  // Animate lives
+  livesDisplay.style.transform = 'scale(1.3)';
+  setTimeout(() => {
+    livesDisplay.style.transform = 'scale(1)';
+  }, 200);
+}
+
+// Start spawning obstacles
+setInterval(spawnObstacle, OBSTACLES.spawnInterval);
